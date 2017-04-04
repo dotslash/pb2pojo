@@ -1,35 +1,28 @@
 grammar Proto;
 
 proto:
-    (messages OPT_WS_MUST_NL+)+
-    WS?
+    (messages)+
     EOF;
 
-messages: 'message' WS name Open_Brace OPT_WS_MUST_NL+
-                        (field_declaration OPT_WS_MUST_NL*)+
-                      Close_Brace;
-field_declaration: (field_rule WS)? type WS name Equals number ';';
+messages: 'message' name Open_Brace (field_declaration)+ Close_Brace;
+field_declaration: (field_rule)? type name Equals number ';';
 
 
-Open_Brace : WS? '{' WS?;
-Close_Brace : WS? '}' WS?;
-Equals : WS? '=' WS?;
-
-name: WS? Alphabet (Digit| Alphabet | '_')* WS?;
-number: WS? Digit+ WS?;
+name: Alphabet (Digit| Alphabet | '_')*;
+number: Digit+ ;
 
 
+Open_Brace : '{';
+Close_Brace : '}';
+Equals : '=';
 Digit : ('0'..'9');
 Alphabet: ('a'..'z' | 'A'..'Z');
 
 
-type: WS? Type_Main WS?;
-Type_Main : 'int32'| 'int64' |'double' |
-            'float' |'bool' | 'bytes' | 'string';
+type: ('int32'| 'int64' |'double' |
+       'float' |'bool' | 'bytes' | 'string');
 
-field_rule: WS? Field_rule_main WS?;
-Field_rule_main: ('optional' | 'required' | 'repeated');
+field_rule: ('optional' | 'required' | 'repeated');
 
-OPT_WS_MUST_NL: WS? NL;
-WS: (' ' | '\t')+;
-NL:  '\r'? '\n';
+// Skip all whitespaces.
+WS  : [ \t\r\n]+ -> skip ;
