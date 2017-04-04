@@ -1,0 +1,9 @@
+message Employee {
+    optional string name = 1;
+    optional int32 age = 2;
+}
+
+message Employer {
+    optional string name = 1;
+    optional int32 size = 2;
+}
