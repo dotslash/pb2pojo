@@ -1,28 +1,21 @@
 grammar Proto;
 
 proto:
-    (messages)+
+    (message)+
     EOF;
 
-messages: 'message' name Open_Brace (field_declaration)+ Close_Brace;
-field_declaration: (field_rule)? type name Equals number ';';
+message: 'message' IDENTIFIER OPEN_BRACE (field_declaration)+ CLOSE_BRACE;
+field_declaration: (FIELD_RULE)? TYPE IDENTIFIER EQUALS NUMBER ';';
 
-
-name: Alphabet (Digit| Alphabet | '_')*;
-number: Digit+ ;
-
-
-Open_Brace : '{';
-Close_Brace : '}';
-Equals : '=';
-Digit : ('0'..'9');
-Alphabet: ('a'..'z' | 'A'..'Z');
-
-
-type: ('int32'| 'int64' |'double' |
+OPEN_BRACE : '{';
+CLOSE_BRACE : '}';
+EQUALS : '=';
+TYPE: ('int32'| 'int64' |'double' |
        'float' |'bool' | 'bytes' | 'string');
+FIELD_RULE: ('optional' | 'required' | 'repeated');
 
-field_rule: ('optional' | 'required' | 'repeated');
+NUMBER: [0-9]+;
+IDENTIFIER : [a-zA-Z][a-zA-Z0-9_]+;
 
 // Skip all whitespaces.
 WS  : [ \t\r\n]+ -> skip ;

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.alexecollins</groupId>
-    <artifactId>antlr-tutorial</artifactId>
+    <groupId>in.suram</groupId>
+    <artifactId>protobuf-code-gen</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
@@ -13,6 +13,15 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>4.0</version>
+                <configuration>
+                    <outputDirectory>
+                        ${project.build.directory}/generated-sources/antlr4/in/suram/antlr
+                    </outputDirectory>
+                    <arguments>
+                        <argument>-package</argument>
+                        <argument>in.suram.antlr</argument>
+                    </arguments>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -59,6 +68,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
         </dependency>
     </dependencies>
 

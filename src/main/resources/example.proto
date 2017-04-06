@@ -1,1 +1,9 @@
-messageEmployee{optionalstringname=1;optionalint32age=2;}messageEmployer{optionalstringname=1;optionalint32size=2;}
+message Employee {
+    optional string name = 1;
+    optional int32 age = 2;
+}
+
+message Employer {
+    optional string name = 1;
+    optional int32 size = 2;
+}

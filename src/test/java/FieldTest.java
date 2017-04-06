@@ -1,6 +1,9 @@
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 
+import in.suram.antlr.FieldLexer;
+import in.suram.antlr.FieldParser;
+
 /**
  * @author alex.collins
  */
