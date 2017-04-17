@@ -2,6 +2,7 @@
 message Employee {
     optional string name = 1;
     optional int32 age = 2;
+    optional Employer employer = 3;
 }
 
 message Employer {
@@ -9,4 +10,5 @@ message Employer {
     optional int32 size = 2;
     repeated string location = 3;
     repeated Employee employee = 4;
+    optional Employee ceo = 5;
 }

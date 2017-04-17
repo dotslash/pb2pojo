@@ -10,7 +10,7 @@ import java.util.Map;
 
 @SuppressWarnings("WeakerAccess")
 public class CompiledProtos {
-  private enum Primitive {
+  enum Primitive {
     INT64("int64", "long"),
     INT32("int32", "int"),
     DOUBLE("double"),
@@ -156,7 +156,7 @@ public class CompiledProtos {
       for (Field field : fields) {
         boolean isNewId = idToFields.put(field.id, field) == null;
         boolean isNewName = nameToFields.put(field.name, field) == null;
-        isValid = isValid && !isNewId && !isNewName;
+        isValid = isValid && isNewId && isNewName;
       }
       this.idToFields = idToFields;
       this.nameToFields = nameToFields;

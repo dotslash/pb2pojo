@@ -1,6 +1,8 @@
 package in.suram.protobuf;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -13,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import in.suram.antlr.ProtoBaseListener;
 import in.suram.antlr.ProtoLexer;
@@ -28,6 +32,8 @@ public class ProtoDefinitionCompiler {
   public static List<Message> Compile(InputStream inputStream) throws IOException {
     ArrayList<Message> nonThreadSafeMessages = Lists.newArrayList();
     List<Message> messages = Collections.synchronizedList(nonThreadSafeMessages);
+    Set<String> messageNames = Sets.newConcurrentHashSet();
+    Set<String> usedMessageNames = Sets.newConcurrentHashSet();
     ProtoLexer lexer = new ProtoLexer(new ANTLRInputStream(inputStream));
     ProtoParser parser = new ProtoParser(new CommonTokenStream(lexer));
 
@@ -51,20 +57,34 @@ public class ProtoDefinitionCompiler {
           @Override
           public void exitMessage(ProtoParser.MessageContext ctx) {
             String name = ctx.IDENTIFIER().getText();
+            messageNames.add(name);
             List<Field> fields = Lists.newArrayList();
             for (ProtoParser.Field_declarationContext field : ctx.field_declaration()) {
+              Type fieldType = Type.make(field.IDENTIFIER().get(0).getText());
+              if (fieldType.primitive == CompiledProtos.Primitive.NONE) {
+                usedMessageNames.add(fieldType.javaType);
+              }
               Field msgfield =
                   new Field(
                       FieldRule.fromName(field.FIELD_RULE().getText()),
-                      Type.make(field.IDENTIFIER().get(0).getText()),
+                      fieldType,
                       field.IDENTIFIER().get(1).getText(),
                       Integer.parseInt(field.NUMBER().getText()));
               fields.add(msgfield);
             }
-            messages.add(new Message(name, fields));
+            Message message = new Message(name, fields);
+            if (!message.isValid) {
+              throw new RuntimeException("invalid message definition :" + name);
+            }
+            messages.add(message);
           }
         });
     parser.proto();
+    Sets.SetView<String> difference = Sets.difference(usedMessageNames, messageNames);
+    if (!difference.isEmpty()) {
+      String unknownMessages = "Unknown Messages : " + Joiner.on(",").join(difference);
+      throw new RuntimeException(unknownMessages);
+    }
     return nonThreadSafeMessages;
   }
 
