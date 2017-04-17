@@ -18,9 +18,10 @@ import java.util.List;
 import in.suram.antlr.ProtoBaseListener;
 import in.suram.antlr.ProtoLexer;
 import in.suram.antlr.ProtoParser;
-import in.suram.protobuf.Message.Field;
-import in.suram.protobuf.Message.FieldRule;
-import in.suram.protobuf.Message.Type;
+import in.suram.protobuf.CompiledProtos.Field;
+import in.suram.protobuf.CompiledProtos.FieldRule;
+import in.suram.protobuf.CompiledProtos.Message;
+import in.suram.protobuf.CompiledProtos.Type;
 
 public class ProtoDefinitionCompiler {
 
@@ -55,8 +56,8 @@ public class ProtoDefinitionCompiler {
               Field msgfield =
                   new Field(
                       FieldRule.fromName(field.FIELD_RULE().getText()),
-                      Type.fromName(field.TYPE().getText()),
-                      field.IDENTIFIER().getText(),
+                      Type.make(field.IDENTIFIER().get(0).getText()),
+                      field.IDENTIFIER().get(1).getText(),
                       Integer.parseInt(field.NUMBER().getText()));
               fields.add(msgfield);
             }
